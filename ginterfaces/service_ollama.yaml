@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: ollama_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: Manage Ollama endpoint.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /giollama/pull:
+    get:
+      tags: []
+      parameters:
+        - name: name
+          description: Ollama pullable model name
+          in: header
+          required: true
+          deprecated: false
+          schema:
+            type: string
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Successful
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+components:
+  securitySchemes: {}
+  schemas: {}
+  headers: {}
+tags: []
+servers: []
+security: []

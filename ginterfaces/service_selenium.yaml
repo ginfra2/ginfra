@@ -1,0 +1,191 @@
+openapi: 3.0.3
+info:
+  title: selenium service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: Selenium testing service.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /giselenium/run:
+    post:
+      tags: []
+      parameters:
+        - name: target
+          in: header
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            pattern: ^([a-zA-Z1234567890\-/:.]+$)
+      requestBody:
+        description: Blob to run.
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Selenium started
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/SeleniumInfo'
+              }
+            }
+          }
+        '409':
+          description: Conflict, already running.
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /giselenium/status:
+    get:
+      tags: []
+      parameters:
+        - name: id
+          in: header
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            pattern: ^([a-zA-Z1234567890_]+$)
+      responses:
+        '200':
+          description: Selenium started
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/SeleniumStatus'
+              }
+            }
+          }
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /giselenium/log:
+    get:
+      tags: []
+      parameters:
+        - name: id
+          in: header
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            pattern: ^([a-zA-Z1234567890_]+$)
+      responses:
+        '200':
+          description: Selenium log
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/SeleniumLog'
+              }
+            }
+          }
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /giselenium/result:
+    get:
+      tags: []
+      parameters:
+        - name: id
+          in: header
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            pattern: ^([a-zA-Z1234567890_]+$)
+      responses:
+        '200':
+          description: Selenium result
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/SeleniumResult'
+              }
+            }
+          }
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /giselenium/stop/{id}:
+    get:
+      tags: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            pattern: ^([a-zA-Z1234567890_]+$)
+      responses:
+        '200':
+          description: Selenium started
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+components:
+  securitySchemes: {}
+  schemas:
+    SeleniumInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+    SeleniumStatus:
+      type: object
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+        last_error:
+          type: string
+    SeleniumLog:
+      type: object
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+        log:
+          type: string
+    SeleniumResult:
+      type: object
+      properties:
+        result:
+          type: string
+  headers: {}
+tags: []
+servers: []
+security: []

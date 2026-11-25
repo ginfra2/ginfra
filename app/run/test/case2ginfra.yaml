@@ -1,0 +1,8 @@
+---
+Workflow:
+  - Ginfra:
+      Cmd: tool info
+      Post: y
+      Success: Command executed
+
+

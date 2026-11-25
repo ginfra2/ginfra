@@ -1,0 +1,368 @@
+components:
+    headers: {}
+    schemas:
+        ControlActionResponse:
+            properties:
+                note:
+                    pattern: ^([a-zA-Z]+$)
+                    type: string
+            type: object
+        ControlDatasourceInitRequest:
+            properties:
+                name:
+                    pattern: ^([a-zA-Z1234567890]+$)
+                    type: string
+            required:
+                - name
+            type: object
+        ControlDatasourceInitResponse:
+            properties:
+                password:
+                    pattern: ^([a-zA-Z1234567890\.\@\$\#\!\^\*\(\)]+$)
+                    type: string
+                port:
+                    maximum: 65535
+                    minimum: 100
+                    type: integer
+                uri:
+                    pattern: ^([a-z][a-z0-9+.-]*):(?:\/\/((?:(?=((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*))(\3)@)?(?=(\[[0-9A-F:.]{2,}\]|(?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*))\5(?::(?=(\d*))\6)?)(\/(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\8)?|(\/?(?!\/)(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\10)?)(?:\?(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\11)?(?:#(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\12)?$/i
+                    type: string
+                username:
+                    pattern: ^([a-zA-Z]+$)
+                    type: string
+            required:
+                - username
+                - password
+                - port
+                - uri
+            type: object
+        ErrorResponse:
+            properties:
+                diagnostics:
+                    type: string
+                message:
+                    type: string
+            type: object
+        SeleniumInfo:
+            properties:
+                id:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            type: object
+        SeleniumLog:
+            properties:
+                id:
+                    type: string
+                log:
+                    type: string
+                status:
+                    type: string
+            type: object
+        SeleniumResult:
+            properties:
+                result:
+                    type: string
+            type: object
+        SeleniumStatus:
+            properties:
+                id:
+                    type: string
+                last_error:
+                    type: string
+                status:
+                    type: string
+            type: object
+        Specifics:
+            type: string
+        authtoken:
+            description: A non-OAuth authorization token.
+            pattern: ([A-Z])+
+            type: string
+        base64:
+            pattern: ([A-Za-z0123456789+/=])+
+            type: string
+        giusername:
+            pattern: ^[a-zA-Z]([a-zA-Z1234567890_]+$)
+            type: string
+            x-last-modified: 1689365100370
+        namevalue:
+            properties:
+                name:
+                    type: string
+                value:
+                    type: string
+            type: object
+    securitySchemes: {}
+info:
+    description: Selenium testing service.
+    license:
+        name: MIT License
+        url: https://opensource.org/licenses/MIT
+    title: selenium service
+    version: "1.0"
+    x-logo:
+        url: ""
+openapi: 3.0.3
+paths:
+    /ginfra/datasource/init:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlDatasourceInit
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ControlDatasourceInitRequest'
+                description: Init the data source.
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlDatasourceInitResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Initialize a data source.
+    /ginfra/manage/reset:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlManageReset
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlActionResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this service/server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Reset the service/server.
+    /ginfra/manage/stop:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlManageStop
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlActionResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Stop the service/server.
+    /ginfra/specifics:
+        get:
+            description: Get specifics
+            operationId: giGetSpecifics
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Specifics'
+                    description: Success
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get specifics for this service
+    /giselenium/log:
+        get:
+            parameters:
+                - deprecated: false
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SeleniumLog'
+                    description: Selenium log
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            tags: []
+    /giselenium/result:
+        get:
+            parameters:
+                - deprecated: false
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SeleniumResult'
+                    description: Selenium result
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            tags: []
+    /giselenium/run:
+        post:
+            parameters:
+                - deprecated: false
+                  in: header
+                  name: target
+                  required: true
+                  schema:
+                    pattern: ^([a-zA-Z1234567890\-/:.]+$)
+                    type: string
+            requestBody:
+                content:
+                    text/plain:
+                        schema:
+                            type: string
+                description: Blob to run.
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SeleniumInfo'
+                    description: Selenium started
+                "409":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Conflict, already running.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            tags: []
+    /giselenium/status:
+        get:
+            parameters:
+                - deprecated: false
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SeleniumStatus'
+                    description: Selenium started
+                "400":
+                    description: Bad request
+                "404":
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            tags: []
+    /giselenium/stop/{id}:
+        get:
+            parameters:
+                - deprecated: false
+                  in: path
+                  name: id
+                  required: true
+                  schema:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            responses:
+                "200":
+                    description: Selenium started
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            tags: []
+security: []
+servers: []
+tags: []

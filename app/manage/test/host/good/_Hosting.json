@@ -1,0 +1,12 @@
+{
+  "DeploymentName": "default",
+  "ConfigAccessToken": "AEMPXVOQBJVW",
+  "ConfigUrl": "http://172.18.0.2:5111",
+  "ConfigPortalHostUrl": "http://desktop:5111",
+  "NextServicePort": 8906,
+  "ConfigContainerId": "d5928c4d2736",
+  "DockerHost": "desktop",
+  "NetworkName": "ginfranet_default",
+  "NetworkId": "6bd4a054448a",
+  "InitConfigMapName": ""
+}

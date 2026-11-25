@@ -1,0 +1,12 @@
+---
+Meta:
+  WorkingDir: .
+Workflow:
+  - Zorp:
+      Cmd: echo "Bork"
+      Output:
+        Scan: or
+  - Cmd:
+      Cmd: echo "Bork Bork"
+      Output:
+        Scan: blooog

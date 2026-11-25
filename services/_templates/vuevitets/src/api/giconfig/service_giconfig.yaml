@@ -1,0 +1,543 @@
+components:
+    schemas:
+        ConfigPath:
+            pattern: ([A-Za-z0123456789._\-^\|\(\)\[\]\{\}/])+
+            type: string
+        ConfigPortalRequest:
+            properties:
+                portal:
+                    description: Typically an address or DN for the portal.
+                    type: string
+                sclass:
+                    description: Service class.
+                    type: string
+            type: object
+        ConfigQueryResponse:
+            properties:
+                block:
+                    $ref: '#/components/schemas/base64'
+                    description: Base64 json block representing the config.
+                qpath:
+                    $ref: '#/components/schemas/ConfigPath'
+            type: object
+        ConfigServiceInstanceRequest:
+            properties:
+                deployment:
+                    description: Deployment name.  If blank it will be the default deployment.
+                    type: string
+                fqdn:
+                    description: FQDN for the entrypoint for the service.
+                    type: string
+                id:
+                    description: IP address.
+                    type: string
+                ip:
+                    description: IP address.
+                    type: string
+                name:
+                    description: System unique name
+                    type: string
+                type:
+                    description: Deployment type.
+                    type: string
+            type: object
+        ConfigServiceRegistrationRequest:
+            properties:
+                configprovider:
+                    description: URI to configuration provider.  This is not authoritive.
+                    type: string
+                deployment:
+                    description: Deployment name.  If blank it will be the default deployment.
+                    type: string
+                image:
+                    type: string
+                name:
+                    description: System unique name
+                    type: string
+                port:
+                    description: Exposed service port
+                    format: int32
+                    maximum: 65535
+                    minimum: 20
+                    type: integer
+                serviceclass:
+                    type: string
+                specifics:
+                    items:
+                        $ref: '#/components/schemas/namevalue'
+                    type: array
+            type: object
+        ConfigServiceRegistrationResponse:
+            properties:
+                confauth:
+                    $ref: '#/components/schemas/authtoken'
+                    description: Auth token the service should use to access this service.
+                name:
+                    description: System unique name
+                    type: string
+            type: object
+        ConfigServiceSetRequest:
+            properties:
+                failmode:
+                    enum:
+                        - none
+                        - rollback
+                    type: string
+                items:
+                    items:
+                        $ref: '#/components/schemas/ConfigSetItem'
+                    type: array
+            type: object
+        ConfigSetItem:
+            properties:
+                block:
+                    $ref: '#/components/schemas/base64'
+                path:
+                    $ref: '#/components/schemas/ConfigPath'
+            type: object
+        DiscoverPortalResponse:
+            properties:
+                uri:
+                    description: Portal location
+                    type: string
+            type: object
+        DiscoverServiceResponse:
+            properties:
+                uri:
+                    description: Discovered uri
+                    type: string
+            type: object
+        ErrorResponse:
+            properties:
+                diagnostics:
+                    type: string
+                message:
+                    type: string
+            type: object
+        GetKindType:
+            enum:
+                - service
+            type: string
+        Specifics:
+            type: string
+        authtoken:
+            description: A non-OAuth authorization token.
+            pattern: ([A-Z])+
+            type: string
+        base64:
+            pattern: ([A-Za-z0123456789+/=])+
+            type: string
+        giusername:
+            pattern: ^[a-zA-Z]([a-zA-Z1234567890_]+$)
+            type: string
+            x-last-modified: 1689365100370
+        namevalue:
+            properties:
+                name:
+                    type: string
+                value:
+                    type: string
+            type: object
+    securitySchemes: {}
+info:
+    contact:
+        email: inquiries@ginfra.tech
+    description: Configuration service.
+    title: GIConfig Service
+    version: 0.0.1
+openapi: 3.0.3
+paths:
+    /giconfig/deregister/{deployment}/{name}/:
+        post:
+            description: A priviledged deregistration request.
+            operationId: giConfigDeregisterService
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Unique name of the service.
+                  in: path
+                  name: name
+                  required: true
+                  schema:
+                    type: string
+                - description: Unique deployment name.
+                  in: path
+                  name: deployment
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "403":
+                    description: Not authorized
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Deregister a service.
+    /giconfig/discover/portal/{deployment}/{serviceclass}:
+        get:
+            description: Discover a portal location for a deployment.  A portal provides external access to a service.
+            operationId: giDiscoverPortal
+            parameters:
+                - description: Deployment name.
+                  in: path
+                  name: deployment
+                  required: true
+                  schema:
+                    type: string
+                - description: Service class name.
+                  in: path
+                  name: serviceclass
+                  required: true
+                  schema:
+                    type: string
+                - description: Access token.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DiscoverPortalResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "404":
+                    description: Not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Discover a portal for a deployment.
+    /giconfig/discover/service/{deployment}/{serviceclass}:
+        get:
+            description: Discover a service entrypoint uri.
+            operationId: giDiscoverService
+            parameters:
+                - description: Deployment name.
+                  in: path
+                  name: deployment
+                  required: true
+                  schema:
+                    type: string
+                - description: Service class name.
+                  in: path
+                  name: serviceclass
+                  required: true
+                  schema:
+                    type: string
+                - description: Access token.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DiscoverServiceResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "404":
+                    description: Not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Discover a service.
+    /giconfig/instance:
+        post:
+            description: A priviledged registration request.
+            operationId: giConfigRegisterInstance
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConfigServiceInstanceRequest'
+                description: Register a service instance.
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "403":
+                    description: Not authorized
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Register or update a service instance.
+    /giconfig/portal/{operation}/{deployment}/:
+        post:
+            description: Register or update a portal.
+            operationId: giConfigPortal
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Unique deployment name.
+                  in: path
+                  name: operation
+                  required: true
+                  schema:
+                    enum:
+                        - put
+                        - remove
+                    type: string
+                - description: Unique deployment name.
+                  in: path
+                  name: deployment
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConfigPortalRequest'
+                description: Register a portal.
+                required: true
+            responses:
+                "200":
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "403":
+                    description: Not authorized
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Register or update a portal.
+    /giconfig/query:
+        get:
+            description: Query configuration data.
+            operationId: giConfigQueryConfig
+            parameters:
+                - description: The dot separated path the configuration point.
+                  in: header
+                  name: qpath
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/ConfigPath'
+                - description: Access token.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConfigQueryResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "404":
+                    description: Not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Query config.
+    /giconfig/register:
+        post:
+            description: A privileged registration request.
+            operationId: giConfigRegisterService
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConfigServiceRegistrationRequest'
+                description: Register a service.
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "403":
+                    description: Not authorized
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Register a service.
+    /giconfig/remove:
+        get:
+            description: Remove configuration data.
+            operationId: giRemoveConfig
+            parameters:
+                - description: The dot separated path the configuration point.
+                  in: header
+                  name: qpath
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/ConfigPath'
+                - description: Access token.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "404":
+                    description: Not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Remove config.
+    /giconfig/set:
+        post:
+            description: A privileged registration request.
+            operationId: giConfigSetConfig
+            parameters:
+                - description: Access token.
+                  in: header
+                  name: confauth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConfigServiceSetRequest'
+                description: Set config.
+                required: true
+            responses:
+                "200":
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "403":
+                    description: Not authorized
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Set configurations.
+    /specifics:
+        get:
+            description: Get specifics
+            operationId: giGetSpecifics
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Specifics'
+                    description: Success
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get specifics for this service

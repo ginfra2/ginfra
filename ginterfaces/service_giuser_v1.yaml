@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: giuser_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: User information server.  This is not a user authentication service.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /giuser/v1/user/{username}:
+    get:
+      tags: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/giusername'
+      responses:
+        '200':
+          description: User found
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/userinfov1'
+              }
+            }
+          }
+          x-last-modified: 1689364882274
+        '404':
+          description: Not found
+components:
+  securitySchemes: {}
+  schemas:
+    userinfov1:
+      type: object
+      required: []
+      properties:
+        username:
+          $ref: 'gi_common.yaml#/components/schemas/giusername'
+        firstname:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+        lastname:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+  headers: {}
+tags: []
+servers: []
+security: []

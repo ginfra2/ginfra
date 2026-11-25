@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "name": "stub_service",
+    "type": "server",
+    "module_name": "",
+    "serviceclass": "",
+    "invocationcmd": ""
+}

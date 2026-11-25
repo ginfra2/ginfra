@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: gib2b_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: This is for testing purposes only at this time.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /gib2b/biz/{bizname}:
+    get:
+      tags: []
+      parameters:
+        - name: bizname
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            $ref: 'gi_common_1.yaml#/components/schemas/giusername'
+      responses:
+        '200':
+          description: Business found.
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/userinfo'
+              }
+            }
+          }
+          x-last-modified: 1689364882274
+        '404':
+          description: Not found
+components:
+  securitySchemes: {}
+  schemas:
+    userinfo:
+      type: object
+      required: []
+      properties:
+        businessname:
+          $ref: 'service_2_2.yaml#/components/schemas/giusername'
+        type:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+  headers: {}
+tags: [
+  {
+    name: tag1,
+    description: Tag 1
+  },
+  {
+    name: tag2,
+    description: Tag 2
+  }
+]
+servers: [
+  {
+    url: http://1/,
+    description: number 1
+  },
+  {
+    url: http://2/,
+    description: number 2
+  }
+]
+security: []

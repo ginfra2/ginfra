@@ -1,0 +1,47 @@
+{
+    "auth": "AQTHCLLPSFJG",
+    "deployments": {
+        "default": {
+            "discovery": {
+                "portals": {
+                    "*": "localhost"
+                },
+                "services": {
+                    "postgres": "http://localhost:8900/"
+                }
+            },
+            "services": {
+                "minimal_server": {
+                    "management": {
+                        "auth": "XAWJYFFDIDRY",
+                        "instance": {
+                            "local": {
+                                "fqdn": "localhost",
+                                "id": "local",
+                                "ip": "localhost",
+                                "type": "local"
+                            }
+                        }
+                    },
+                    "service": {
+                        "auth": "XAWJYFFDIDRY",
+                        "config": {
+                            "config_provider": "file://test/config.json",
+                            "image": "minimal_server",
+                            "port": 44244,
+                            "service_class": "minimal_server",
+                            "specifics": {
+                            }
+                        },
+                        "service_auth": "MOMPT5A0GSLJIDPIENF5"
+                    },
+                    "type": "local"
+                }
+            }
+        }
+    },
+    "live": {
+        "time": "2024-06-13T15:02:00.07252905Z"
+    }
+}
+

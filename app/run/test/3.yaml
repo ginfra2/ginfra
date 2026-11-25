@@ -1,0 +1,21 @@
+---
+Meta:
+    Config: 3.config
+Workflow:
+  - Cmd:
+      Platform: windows
+      Cmd: <<< COMMAND >>> -v
+      Output:
+        Scan: <<< SCAN >>>
+        NoScan: <<< NOSCAN >>>
+      Success: <<<WINDOWS>>> command is present.
+  - Cmd:
+      Platform: nix
+      Cmd: ginfra -v
+      Output:
+        Scan: version
+        NoScan: management
+      Success:  <<< UNIX >>> command is present.
+  - Cmd:
+      Cmd: <<< COMMAND >>> host
+

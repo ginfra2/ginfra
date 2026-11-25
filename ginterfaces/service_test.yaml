@@ -1,0 +1,409 @@
+openapi: 3.0.3
+info:
+  title: test_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: Manage test service.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /gitest/run:
+    post:
+      summary: Run a test.
+      description: Run a test test.
+      operationId: giTestRun
+      parameters:
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: target
+          in: header
+          description: Target URL.
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: header
+          description: Script or snippet name.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: header
+          description: Id for the run.
+          required: true
+          schema:
+            type: integer
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+        - name: values
+          in: header
+          description: Values for the run.  These should be somewhat limited.
+          schema:
+            type: string
+        - name: provider
+          in: header
+          description: Execution provider.
+          required: true
+          schema:
+            type: string
+        - name: provider_url
+          in: header
+          description: Execution provider endpoint URL.
+          schema:
+            type: string
+        - name: provider_token
+          in: header
+          description: Execution provider endpoint URL authorization token.
+          schema:
+            type: string
+        - name: provider_model
+          in: header
+          description: Execution provider endpoint model request.
+          schema:
+            type: string
+        - name: cache_mode
+          in: header
+          description: Cache mode for the run.
+          schema:
+            type: string
+        - name: viewport_x
+          in: header
+          description: Viewport X size in pixels.
+          schema:
+            type: integer
+        - name: viewport_y
+          in: header
+          description: Viewport Y size in pixels.
+          schema:
+            type: integer
+        - name: is_order
+          in: header
+          description: Indicates if the text represents an order.
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        description: Test file data.
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRunInfo'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User ID is either empty or an unacceptable format.
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /gitest/status/test:
+    get:
+      summary: Get status for a test.
+      description: Get status for a test.
+      operationId: giTestStatusTest
+      parameters:
+        - name: auth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: id
+          in: header
+          description: Test ID.
+          required: true
+          schema:
+            type: string
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestStatusItem'
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User ID did not submit test with the given id.
+        '404':
+          description: Test with given id not found.
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /gitest/stop:
+    get:
+      summary: Stop a test.
+      description: Stop a test with the given id..
+      operationId: giTestStop
+      parameters:
+        - name: auth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: id
+          in: header
+          description: Test ID.
+          required: true
+          schema:
+            type: string
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestStatusItem'
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User ID did not submit test with the given id.
+        '404':
+          description: Test with given id not found.
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /gitest/status/all:
+    get:
+      summary: Get status for all tests.
+      description: Get status for all tests submitted by the given user id.
+      operationId: giTestStatusAll
+      parameters:
+        - name: auth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestStatusInfo'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User ID is either empty or an unacceptable format.
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /gitest/log:
+    get:
+      summary: Get log for a test.
+      description: Get log for a test.
+      operationId: giTestLog
+      parameters:
+        - name: auth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: id
+          in: header
+          description: Test ID.
+          required: true
+          schema:
+            type: string
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User ID did not submit test with the given id.
+        '404':
+          description: Test with id not found.
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /gitest/remove:
+    post:
+      summary: Remove a list of completed tests.
+      description: Remove a list of completed tests.
+      operationId: giTestRemove
+      parameters:
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: uid
+          in: header
+          description: ID for the user submitting it.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Test file data.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRemoveRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Not authorized.  Token not acceptable.
+        '403':
+          description: Forbidden.  User id did not submit test with the given id.
+        '404':
+          description: Not found if any of the ids are not found.  Those that are found will be removed.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+components:
+  securitySchemes: {}
+  schemas:
+    TestRunInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id for the run.
+        host:
+          type: string
+          description: Host that is running this test.
+    TestStatusResult:
+      type: object
+      description: All values will be zero if test is not complete or had a catastrophic fault.
+      properties:
+        pass:
+          type: integer
+          description: Number of passed tests
+        fail:
+          type: integer
+          description: Number of failed tests
+        total:
+          type: integer
+          description: Total number of tests
+    TestStatusInfo:
+      type: object
+      properties:
+        running:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStatusItem'
+        queue:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStatusItem'
+        done:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStatusItem'
+    TestStatusItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id for the run.
+        name:
+          type: string
+          description: Script or snippet name.
+        status:
+          type: string
+          description: Textual and/or narrative status or error information.
+        token:
+          type: string
+          description: Discrete token describing the current state of the test.
+          enum: [ "waiting", "start", "running", "done", "error" ]
+        result:
+          $ref: '#/components/schemas/TestStatusResult'
+    TestRemoveRequest:
+      type: object
+      properties:
+        remove:
+          type: array
+          items:
+            type: string
+  headers: {}
+tags: []
+servers: []
+security: []

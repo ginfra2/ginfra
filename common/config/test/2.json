@@ -1,0 +1,82 @@
+{
+   "auth": "AOKRJESADTIQ",
+   "deployments": {
+      "default": {
+         "discovery": {
+            "portals": {
+               "*": "node1"
+            },
+            "services": {
+               "otelcol": "http://192.168.16.4:8901/",
+               "otelcol/collector": "grpc://192.168.16.4:4317/",
+               "uptrace": "http://192.168.16.3:8900/",
+               "uptrace/uptrace_dsn": "http://project2_secret_token@192.168.16.3:14318?grpc=14317",
+               "uptrace/uptracegrpc_endpoint": "http://192.168.16.3:14317/"
+            }
+         },
+         "services": {
+            "otelcol": {
+               "management": {
+                  "auth": "XVABLHDGNRLK",
+                  "instance": {
+                     "d46d226bbd28": {
+                        "fqdn": "192.168.16.4",
+                        "id": "d46d226bbd28",
+                        "ip": "192.168.16.4",
+                        "type": "host"
+                     }
+                  }
+               },
+               "service": {
+                  "auth": "XVABLHDGNRLK",
+                  "config": {
+                     "config_provider": "http://192.168.16.2:5111/",
+                     "image": "gservices/server_otelcol",
+                     "port": 8901,
+                     "service_class": "otelcol",
+                     "specifics": {}
+                  },
+                  "service_auth": "3B9HZZBYQ37V9SZMW69Q"
+               },
+               "type": "host"
+            },
+            "uptrace": {
+               "management": {
+                  "auth": "XXTBHNNLOXQG",
+                  "instance": {
+                     "366c5eb4cee9": {
+                        "fqdn": "192.168.16.3",
+                        "id": "366c5eb4cee9",
+                        "ip": "192.168.16.3",
+                        "type": "host"
+                     }
+                  }
+               },
+               "service": {
+                  "auth": "XXTBHNNLOXQG",
+                  "config": {
+                     "config_provider": "http://192.168.16.2:5111/",
+                     "image": "gservices/server_uptrace",
+                     "port": 8900,
+                     "service_class": "uptrace",
+                     "specifics": {}
+                  },
+                  "service_auth": "AK9GC1GF03F1BVQ1BZ39"
+               },
+               "type": "host"
+            }
+         }
+      }
+   },
+   "live": {
+      "time": "2024-06-24T18:15:59.235570396Z"
+   },
+   "reservations": {
+      "default": {
+         "ports": {
+            "otelcol": "8901",
+            "uptrace": "8900"
+         }
+      }
+   }
+}

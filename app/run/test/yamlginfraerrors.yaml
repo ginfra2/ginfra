@@ -1,0 +1,29 @@
+---
+Comment:
+  - Info: General stuff.
+Workflow:
+  - Ginfra:
+      Comment:
+        - Info: More stuff
+      WorkingDir: ../gservices/service_giconfig
+      Remove: log/*.log
+      Cmd: manage local start config:// --clear
+      Detach: blah
+      Output:
+        Delay: poiuytr
+        Scan: Service starting
+        Source: log/ginfra.log
+        Thing: Words
+      Ping:
+        Delay: xxxx
+        Until: yyyy
+        Url: http://localhost:5111/specifics
+        CodeExpect: zzzz
+      Success: Configuration provider starting.
+  - Ginfra:
+      GinfraBork: AAAA
+  - Ginfra:
+      Comment:
+        - TestCase: TOKEN_POST is boolean
+      Post: true
+

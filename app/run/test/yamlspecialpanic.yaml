@@ -1,0 +1,11 @@
+Meta:
+    WorkingDir: .
+Workflow:
+    - Cmd:
+          Cmd: echo "Bork"
+          Output:
+              Scan: or
+    - SPECIALPANICFGORTESTING:
+          Cmd: echo "Bork Bork"
+          Output:
+              Scan: blooog

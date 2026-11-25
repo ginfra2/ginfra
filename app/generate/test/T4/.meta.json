@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "name": "giuser",
+    "type": "xxxxxxxyyyyyzzzzz",
+    "module_name": "gitlab.com/ginfra/gservices/service_giuser",
+    "serviceclass": "giuser",
+    "invocationcmd": ""
+}

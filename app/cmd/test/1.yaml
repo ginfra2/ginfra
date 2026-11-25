@@ -1,0 +1,19 @@
+---
+Workflow:
+  - Cmd:
+      Cmd: ginfra host
+      FailOk: true
+      Post: "1"
+      Output:
+        Scan: Host management
+  - Cmd:
+      - Cmd: ginfra host --bork
+      - Post: false
+      - FailOk: true
+      - Output:
+          Scan: Error
+  - Cmd:
+      - Cmd: ginfra host --duck
+      - FailOk: true
+      - Post: true
+

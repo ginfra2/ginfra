@@ -1,0 +1,69 @@
+---
+Comment:
+  - Info: General stuff.
+Meta:
+  Comment: Stuff
+  Deployment: thisdeployment
+Workflow:
+  - Ginfra:
+      Comment:
+        - Info: More stuff
+      WorkingDir: ../gservices/service_giconfig
+      Remove: log/*.log
+      Cmd: manage local start config:// --clear
+      Detach: true
+      Output:
+        Delay: 200
+        Scan: Service starting
+        Source: log/ginfra.log
+      Ping:
+        Repeat: 3
+        Delay: 50
+        Until: 6000
+        Url: http://localhost:5111/specifics
+        CodeExpect: 200
+        Comment: Nothing really
+      Success: Configuration provider starting.
+  - Ginfra:
+      WorkingDir: ../gservices/service_giuser
+      Remove: log/*.log
+      Cmd: manage local start http://localhost:5111 user_provider file://test/userfile.json
+      Detach: true
+      Output:
+        - Delay: 200
+        - Until: 5000
+        - Repeat: 3
+        - Scan: Service starting
+        - Source: log/ginfra.log
+        - Capture:
+            Target: Thing
+      Ping:
+        Delay: 50
+        Until: 6000
+        Url: http://localhost:8900/specifics
+        CodeExpect: 200
+      Success: User provider starting.
+  - Ginfra:
+      WorkingDir: ../gservices/web_userview
+      Remove: log/*.log
+      Cmd: manage local start http://localhost:5111 --port 8080
+      Detach: true
+      Repeat: 3
+      Ping:
+        Delay: 500
+        Until: 6000
+        Url: http://localhost:8080/index.html
+        CodeExpect: 200
+      Success: Web Userview started.
+  - Cmd:
+      Comment:
+        - Note: This is a note.
+      WorkingDir: ../gservices/service_giconfig
+      Remove: logs/*.log
+      Repeat: 3
+      RepeatDelay: 100
+      Ping:
+        Delay: 44
+        Until: 4444
+        Url: http://localhost:5444/specifics
+        CodeExpect: 444

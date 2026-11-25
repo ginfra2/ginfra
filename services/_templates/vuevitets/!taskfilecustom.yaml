@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+
+  stubs:
+    dir: '{{.USER_WORKING_DIR}}/src/api'
+    cmds:
+       - echo "package openapi-typescript-codegen@^0.25.0 must be installed instead of openapi@^1.0.0.  If you see any conflicts involving openapi, please remove any previous packages and then run this again."
+       - npm install openapi-typescript-codegen@^0.25.0
+       - ginfra --target merged_service_giconfig.yaml ginterface merge openapi configservice service_giconfig.yaml
+       - npx openapi --input merged_service_giconfig.yaml --output giconfig --client axios --name Giconfig

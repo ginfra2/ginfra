@@ -1,0 +1,1 @@
+{"id":"local","auth":"AAAAAAAAAAAA","config_access_token":"AAAAAAAAAAAA","config_host_uri":"file://ginfra/test/config.json","config_uri":"file://ginfra/test/config.json","deployment":"default","name":"<<<ServiceName>>>","port":8900,"specifics":[],"type":"local"}

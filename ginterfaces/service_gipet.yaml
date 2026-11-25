@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: gipet_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: Manage the pets.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /gipet/pet:
+    get:
+      tags: []
+      parameters:
+        - name: pettype
+          in: header
+          required: true
+          deprecated: false
+          schema: {
+            $ref: '#/components/schemas/pettype'
+          }
+      responses:
+        '200':
+          description: Pet found.
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/petinfo'
+              }
+            }
+          }
+          x-last-modified: 1689364882274
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+components:
+  securitySchemes: {}
+  schemas:
+    pettype:
+      type: string
+      enum: [ "dog", "cat", "llama" ]
+    petinfo:
+      type: object
+      required: []
+      properties:
+        pettype:
+          $ref: '#/components/schemas/pettype'
+        breed:
+          type: string
+          pattern: ^([a-zA-Z ]+$)
+  headers: {}
+tags: []
+servers: []
+security: []

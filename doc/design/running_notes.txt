@@ -1,0 +1,43 @@
+kubectl delete configmap default-scgiconfig -n default
+
+
+
+
+=======
+
+
+
+rm -f Hosting.json ; ginfra manage host init gservices/giconfig
+ginfra  manage host start giuser gservices/giuser user_provider file://test/userfile.json
+ginfra manage host show giuser
+ginfra manage host stop giuser
+
+
+
+======
+
+
+docker run -d --net=nodenet --rm services/giuser:unpublished file://test/config.json AAA
+
+docker network create -d ipvlan \
+    --subnet=192.168.2.0/24 \
+    --gateway=192.168.1.1 \
+    -o ipvlan_mode=l2 \
+    -o parent=eth0 nodenet
+
+where eth0 is the host's ethernet interface
+
+docker network create \
+  --driver=bridge \
+  --subnet 192.168.1.0/24 \
+  --gateway=192.168.1.1 \
+  nodenet
+
+
+
+
+============== APP ========================
+
+npm install @openapitools/openapi-generator-cli -g
+openapi-generator-cli generate -g typescript-axios -i service_giconfig.yaml
+

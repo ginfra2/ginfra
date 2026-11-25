@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: giuser_service
+  version: '2.0'
+  x-logo:
+    url: ''
+  description: User information server.  This is not a user authentication service.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /giuser/v2/user/{username}:
+    description: Get the user information for the given user.
+    get:
+      tags: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/giusername'
+      responses:
+        '200':
+          description: User found
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/userinfov2'
+              }
+            }
+          }
+          x-last-modified: 1689364882274
+        '404':
+          description: Not found
+  /giuser/v2/user/{username}/coins/use/{numbercoins}:
+    description: Use coins for the given user.
+    get:
+      tags: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/giusername'
+        - name: numbercoins
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Coins used
+          content: {
+            application/json: {
+              schema: {
+                $ref: '#/components/schemas/coinreceipt'
+              }
+            }
+          }
+          x-last-modified: 1689364882274
+        '406':
+          description: Not enough coins.
+components:
+  securitySchemes: {}
+  schemas:
+    userinfov2:
+      type: object
+      required: []
+      properties:
+        username:
+          $ref: 'gi_common.yaml#/components/schemas/giusername'
+        coins:
+          type: integer
+          minimum: 0
+        firstname:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+        lastname:
+          type: string
+          pattern: ^([a-zA-Z1234567890_]+$)
+    coinreceipt:
+      type: object
+      properties:
+        coins_remaining:
+          type: integer
+          minimum: 0
+        receipt_hash:
+          type: string
+          pattern: ^([A-Z1234567890]+$)
+  headers: {}
+tags: []
+servers: []
+security: []

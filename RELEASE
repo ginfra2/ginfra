@@ -1,0 +1,32 @@
+v.0.3.0
+
+Kubernetes support.
+Improvements in tests.
+Unified .meta and specifics.json strategy.
+
+-----
+
+v.0.2.0
+
+Completion of much of my original vision except managed services (i.e. kubernetes).
+Improve documentation.
+Support for OpenTelemetry
+Include Java/Micronaut as a template service framework.
+Greatly expand testing and get CI pipeline running in gitlab.
+Simple orchestration scripting for non-production uses.
+Complete end-to-end with Go service, Java service, web frontend and observability platform with UI.
+
+-----
+
+v.0.1.0
+
+End-to-end demonstration working.
+Openapi generation pulled into the code instead of a tool.
+
+-----
+
+v0.0.5
+
+First public release.
+
+

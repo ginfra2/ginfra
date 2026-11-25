@@ -1,0 +1,13 @@
+---
+BadTopLevel:
+  - Cmd:
+      Cmd: ginfra -v
+      Post: t
+      Output:
+        Scan: version
+        NoScan: management
+  - Cmd:
+      Cmd: ginfra -v
+      Ping:
+        Bad: Ping directive
+        NoScan: management

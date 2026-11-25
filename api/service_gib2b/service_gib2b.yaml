@@ -1,0 +1,92 @@
+components:
+    headers: {}
+    schemas:
+        ErrorResponse:
+            properties:
+                diagnostics:
+                    type: string
+                message:
+                    type: string
+            type: object
+        Specifics:
+            type: string
+        authtoken:
+            description: A non-OAuth authorization token.
+            pattern: ([A-Z])+
+            type: string
+        base64:
+            pattern: ([A-Za-z0123456789+/=])+
+            type: string
+        giusername:
+            pattern: ^[a-zA-Z]([a-zA-Z1234567890_]+$)
+            type: string
+            x-last-modified: 1689365100370
+        namevalue:
+            properties:
+                name:
+                    type: string
+                value:
+                    type: string
+            type: object
+        userinfo:
+            properties:
+                businessname:
+                    $ref: '#/components/schemas/giusername'
+                type:
+                    pattern: ^([a-zA-Z1234567890_]+$)
+                    type: string
+            required: []
+            type: object
+    securitySchemes: {}
+info:
+    description: This is for testing purposes only at this time.
+    license:
+        name: MIT License
+        url: https://opensource.org/licenses/MIT
+    title: gib2b_service
+    version: "1.0"
+    x-logo:
+        url: ""
+openapi: 3.0.3
+paths:
+    /gib2b/biz/{bizname}:
+        get:
+            parameters:
+                - deprecated: false
+                  in: path
+                  name: bizname
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/giusername'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/userinfo'
+                    description: Business found.
+                    x-last-modified: 1689364882274
+                "404":
+                    description: Not found
+            tags: []
+    /specifics:
+        get:
+            description: Get specifics
+            operationId: giGetSpecifics
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Specifics'
+                    description: Success
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get specifics for this service
+security: []
+servers: []
+tags: []

@@ -1,0 +1,25 @@
+version: '3'
+
+tasks:
+
+  push_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - cmd gradlew.bat build
+      - cmd gradlew.bat jar
+      - cmd /C "copy /Y build\resources\main\logback.xml release\ "
+      - cmd gradlew.bat publishToMavenLocal
+
+  push_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - ./gradlew build
+      - ./gradlew jar
+      - cp -r build/resources/main/logback.xml release/
+      - ./gradlew publishToMavenLocal
+
+  push:
+    run: once
+    deps: [ push_windows, push_nix ]

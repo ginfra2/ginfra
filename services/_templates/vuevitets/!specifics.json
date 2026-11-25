@@ -1,0 +1,20 @@
+{
+   "meta": {
+      "version": 1,
+      "name": "<<<ServiceName>>>",
+      "type": "<<<ServiceType>>>",
+      "module_name": "<<<Module>>>",
+      "serviceclass": "<<<ServiceClass>>>",
+      "invocationcmd": ""
+   },
+   "exposed": {
+      "<<<web_port>>>":{
+         "name": "Web port."
+      }
+   },
+   "expect": {
+      "web_port": {
+         "description": "The port that will host the web server."
+      }
+   }
+}

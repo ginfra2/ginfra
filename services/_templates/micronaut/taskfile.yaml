@@ -1,0 +1,101 @@
+version: '3'
+
+includes:
+  docker: assets/dockertask.yaml
+  custom: taskfilecustom.yaml
+
+tasks:
+
+  clean_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - cmd /C "copy /Y assets\service_config.json.NEW service_config.json"
+
+  clean_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - rm -f service_config.json
+      - rm -f log/*.log
+      - cp -f assets/service_config.json.NEW service_config.json
+
+  clean:
+    deps: [ clean_windows, clean_nix ]
+
+  stubs:
+    deps: [ custom:stubs ]
+
+  build_windows:
+    run: once
+    deps: [ clean_windows, stubs ]
+    platforms: [ windows ]
+    cmds:
+      - cmd /C "copy /Y doc\UserDocs.md assets\ "
+      - cmd assets/seed_repo.cmd
+      - set TEST_HOME={{.TASKFILE_DIR}}; cmd gradlew.bat build
+
+  build_nix:
+    run: once
+    deps: [ clean_nix, stubs ]
+    platforms: [ linux, darwin ]
+    cmds:
+      - cp -f doc/UserDocs.md assets/
+      - ./assets/seed_repo.sh
+      - export TEST_HOME={{.TASKFILE_DIR}}; ./gradlew build
+
+  build:
+    run: once
+    deps: [ build_windows, build_nix ]
+
+  test_windows:
+    run: once
+    deps: [ build_windows ]
+    platforms: [ windows ]
+    cmds:
+      - set TEST_HOME={{.TASKFILE_DIR}}; cmd gradlew.bat test
+
+  test_nix:
+    run: once
+    deps: [ build_nix ]
+    platforms: [ linux, darwin ]
+    cmds:
+      - export TEST_HOME={{.TASKFILE_DIR}}; ./gradlew test
+
+  test:
+    run: once
+    deps: [ test_windows, test_nix ]
+
+  prep:
+    run: once
+    deps: [ clean ]
+    cmds:
+      - java -jar assets/ginfraapp-1.0.0.jar config props
+
+  run_local:
+    run: once
+    deps: [ clean_windows, clean_nix, prep ]
+    cmds:
+      - java -jar build/libs/service_gipet-0.1-all.jar "{{.TASKFILE_DIR}}"
+
+  docker:
+    deps: [ build ]
+    requires:
+      vars: [ GINFRA_DOCKER_REPO ]
+    cmds:
+      - docker build . -f assets/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  docker_push:
+    deps: [ docker ]
+    cmds:
+      - docker push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah:
+    deps: [ build ]
+    cmds:
+      - buildah build -f assets/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah_push:
+    deps: [ buildah ]
+    cmds:
+      - buildah push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}

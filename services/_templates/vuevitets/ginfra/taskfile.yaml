@@ -1,0 +1,46 @@
+version: '3'
+
+tasks:
+
+  clean_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - exec "rm log\*.log -Force"
+
+  clean_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - rm -f log/*.log
+
+  clean:
+    run: once
+    deps: [ clean_windows, clean_nix ]
+    cmds:
+      - go mod tidy
+
+  build:
+    run: once
+    cmds:
+      - go build -v -o ../build/ginfra_service.exe
+
+  unit_test:
+    run: once
+    deps: [ build ]
+    cmds:
+      - go test --tags unit_test ./service -test_service_home "{{.TASKFILE_DIR}}"
+
+  functional_test:
+    run: once
+    deps: [ build ]
+    cmds:
+      - go test --tags functional_test ./service -test_service_home "{{.TASKFILE_DIR}}"
+
+  test:
+    deps: [unit_test, functional_test]
+
+  stubs:
+    run: once
+    cmds:
+      - ginfra ginterface stubs openapi <<<ServiceName>>> control ginfra.yaml

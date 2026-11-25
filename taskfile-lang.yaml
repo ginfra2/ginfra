@@ -1,0 +1,10 @@
+version: '3'
+
+tasks:
+  java_push:
+    cmds:
+      - cd lang/java/giconfig ; task push
+      - cd lang/java/ginfra ; task push
+      - cd lang/java/ginfraapp ; task push
+
+

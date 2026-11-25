@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+
+  stubs:
+    run: once
+    cmds:
+      # "" will add control apis.  You can replace it with your apis.
+      - ginfra --target src/main/resources/merged.yaml ginterface merge openapi <<<ServiceName>>> ""

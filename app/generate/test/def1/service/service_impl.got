@@ -1,0 +1,133 @@
+/*
+Package service
+// >A#
+
+You may license this file however you wish.
+
+// >A#
+*/
+package service
+
+import (
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/labstack/echo/v4"
+	"gitlab.com/ginfra/ginfra/common/service/shared"
+	control "ginfra.info/ginfra/api/gservice/service_gib2b/api/server_control/server"
+	"ginfra.info/ginfra/api/gservice/service_gib2b/local"
+	"ginfra.info/ginfra/api/gservice/service_gib2b/providers"
+	"net/http"
+
+	// # YOUR IMPORTS START HERE
+	// >B###############################################################################################################
+
+    "os"
+
+	// >B###############################################################################################################
+	// #  YOUR IMPORTS END
+)
+
+type Servicegib2b struct {
+	Providers      *providers.ProvidersLoaded
+	ServiceContext *local.GContext
+
+	// # ADD ADDITIONAL SERVICE DATA START HERE
+	// >C###############################################################################################################
+
+	// >C###############################################################################################################
+	// # ADD ADDITIONAL SERVICE DATA END HERE
+}
+
+func NewServicegib2b(gcontext *local.GContext, providers *providers.ProvidersLoaded) (*Servicegib2b, error) {
+	return &Servicegib2b{
+		Providers:      providers,
+		ServiceContext: gcontext,
+	}, nil
+}
+
+func ServiceSetup(service *Servicegib2b) error {
+
+	var err error
+
+	// # ADD ADDITIONAL SETUP CODE START HERE.  All configuration is complete and the providers are ready.
+	// >D###############################################################################################################
+
+    fmt.Printf("More ServiceSetup")
+
+	// >D###############################################################################################################
+	// # ADD ADDITIONAL SETUP CODE END HERE
+
+	return err
+}
+
+var specifics string
+
+func getServiceSpecifics(gis *Servicegib2b) string {
+	if specifics == "" {
+		specifics = shared.LoadSpecifics(gis.ServiceContext.Scfg.ServiceHome)
+	}
+	return specifics
+}
+
+// GiGetSpecifics Get specifics for this service
+// (GET /specifics)
+func (gis *Servicegib2b) GiGetSpecifics(ctx echo.Context) error {
+	var r = getServiceSpecifics(gis)
+	return ctx.JSON(http.StatusOK, r)
+}
+
+func RegisterHandlers(echoServer *echo.Echo, service *Servicegib2b) ([]*openapi3.T, error) {
+
+	// Always register control.
+	sw, err := control.GetSwagger()
+	s := []*openapi3.T{sw}
+	s = append(s, sw)
+	control.RegisterHandlers(echoServer, service)
+
+	// Each api server you host will need to be registered here.
+	// If you have just a single api server, this should be enough:
+	//   service.RegisterHandlers(echoServer, service)
+	//
+	// If you have more than one, you'll need to import them with unique names like this:
+	//    v1 "gitlab.com/ginfra/gservices/service_gib2b/api/service_gib2b/v1/server"
+	//    v2 "gitlab.com/ginfra/gservices/service_gib2b/api/service_gib2b/v2/server"
+	//
+	// and register them something like this:
+	//   v1.RegisterHandlers(echoServer, service)
+	//   v2.RegisterHandlers(echoServer, service)
+	//
+	// If you want schema validation, you must add the swagger definition to the array returned by this function.
+	// It could look like this for a single api:
+	//
+	//      sw, err := myapiservice.GetSwagger()
+	//      s = append(s, sw)
+	//
+	// Or this for multiple apis.
+	//
+	// 		sw, err := v1.GetSwagger()
+	//		s = append(s, sw)
+	//		sw, err = v2.GetSwagger()
+	//		s = append(s, sw)
+	//
+	// #  REGISTRATIONS GO HERE
+	// >E###############################################################################################################
+
+	myapiservice.RegisterHandlers(echoServer, service)  // Imported service from under api/ directory.
+
+	sw, err := service.GetSwagger()
+	s = append(s, sw)
+	
+	fmt.Printf("thing")
+
+	// >E###############################################################################################################
+	// # END REGISTRATIONS
+
+	return s, err
+}
+
+// ^^###################################################################################################################
+// # ADDITIONAL CODE GOES BELOW HERE
+// # Stubs can go here or in other files.
+
+func MoreStuff() {
+    return
+}

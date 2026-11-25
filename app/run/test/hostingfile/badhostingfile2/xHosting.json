@@ -1,0 +1,12 @@
+{
+   "DeploymentName": "default",
+   "ConfigAccessToken": "ABKHOLDPCFHW",
+   "ConfigUrl": "borkbork://",
+   "ConfigPortalHostUrl": "borkbork://",
+   "NextServicePort": 0,
+   "ConfigContainerId": "",
+   "DockerHost": "",
+   "NetworkName": "",
+   "NetworkId": "",
+   "InitConfigMapName": "default-scgiconfig"
+}

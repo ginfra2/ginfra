@@ -1,0 +1,89 @@
+version: '3'
+
+includes:
+  lang: taskfile-lang.yaml
+
+tasks:
+  default:
+    deps: [ install ]
+
+  build:
+    cmds:
+      - go build -v -o build
+
+  test:
+    deps: [ install_notest ]
+    cmds:
+      - go test --tags unit_test,functional_test gitlab.com/ginfra/ginfra/...
+
+  test_all:
+    deps: [ install_notest, install_gtest ]
+    cmds:
+      - go test --tags unit_test,functional_test,local_test,integration_test gitlab.com/ginfra/ginfra/...
+
+  install:
+    deps: [ test ]
+    cmds:
+      - go install
+
+  install_notest:
+    deps: [ build ]
+    cmds:
+      - go install
+
+  clean_windows:
+    platforms: [ windows ]
+    cmds:
+      - exec "rm tmp\test\* -Recurse
+      - exec "rm tmp\tmp_* -Recurse -Force"
+      - exec "rm tmp\*.json -Recurse -Force"
+      - exec "rm coverage.* -Force"
+      - exec "rm report.xml -Force"
+      - exec "rm test.json -Force"
+
+  clean_nix:
+    platforms: [ linux, darwin ]
+    cmds:
+      - rm -rf tmp/test/*
+      - rm -rf tmp/tmp_*
+      - rm -rf tmp/*.json
+      - rm -f coverage.*
+      - rm -f report.xml
+      - rm -f test.json
+
+  clean:
+    deps: [ clean_windows, clean_nix ]
+    cmds:
+      - go mod tidy
+
+  stubs:
+    run: once
+    cmds:
+      - ginfra ginterface stubs openapi configservice service_giconfig service_giconfig.yaml
+      - ginfra ginterface stubs openapi selenium service_selenium service_selenium.yaml
+      - ginfra ginterface stubs openapi test service_test service_test.yaml
+      - ginfra ginterface stubs openapi ginfra service_control ""
+
+  # Build ginfratest tools
+  build_gtest:
+    cmds:
+      - go build -o build ./test/ginfra_stub
+
+  install_gtest:
+    deps: [ build_gtest ]
+    cmds:
+      - go install ./test/ginfra_stub
+
+  # NOTE: ci requires you install this -- go install gotest.tools/gotestsum@latest
+  ci:
+    cmds:
+      - task clean
+      - task install_notest
+      - task install_gtest
+      - gotestsum --junitfile report.xml --jsonfile test.json  --format testname -- -coverpkg=./... -coverprofile coverage.out --tags unit_test,functional_test,local_test,integration_test gitlab.com/ginfra/ginfra/...
+      - grep -v 'ginfra/ginfra/api' coverage.out > coverage.out2
+      - grep -v 'ginfra/ginfra/test' coverage.out2 > coverage.out
+      - go tool cover -html=coverage.out -o coverage.html
+
+  java_push:
+    deps: [ lang:java_push ]

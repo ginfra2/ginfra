@@ -1,0 +1,10 @@
+---
+Workflow:
+  - Cmd:
+      Cmd: ginfra -v
+      Post: t
+      Ping:
+        Bad: Ping
+        Comment: Thing
+Meta:
+  - Comment: Stuff

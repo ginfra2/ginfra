@@ -1,0 +1,584 @@
+components:
+    headers: {}
+    schemas:
+        ControlActionResponse:
+            properties:
+                note:
+                    pattern: ^([a-zA-Z]+$)
+                    type: string
+            type: object
+        ControlDatasourceInitRequest:
+            properties:
+                name:
+                    pattern: ^([a-zA-Z1234567890]+$)
+                    type: string
+            required:
+                - name
+            type: object
+        ControlDatasourceInitResponse:
+            properties:
+                password:
+                    pattern: ^([a-zA-Z1234567890\.\@\$\#\!\^\*\(\)]+$)
+                    type: string
+                port:
+                    maximum: 65535
+                    minimum: 100
+                    type: integer
+                uri:
+                    pattern: ^([a-z][a-z0-9+.-]*):(?:\/\/((?:(?=((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*))(\3)@)?(?=(\[[0-9A-F:.]{2,}\]|(?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*))\5(?::(?=(\d*))\6)?)(\/(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\8)?|(\/?(?!\/)(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\10)?)(?:\?(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\11)?(?:#(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\12)?$/i
+                    type: string
+                username:
+                    pattern: ^([a-zA-Z]+$)
+                    type: string
+            required:
+                - username
+                - password
+                - port
+                - uri
+            type: object
+        ErrorResponse:
+            properties:
+                diagnostics:
+                    type: string
+                message:
+                    type: string
+            type: object
+        Specifics:
+            type: string
+        TestRemoveRequest:
+            properties:
+                remove:
+                    items:
+                        type: string
+                    type: array
+            type: object
+        TestRunInfo:
+            properties:
+                id:
+                    description: Id for the run.
+                    type: string
+            type: object
+        TestStatusInfo:
+            properties:
+                done:
+                    items:
+                        $ref: '#/components/schemas/TestStatusItem'
+                    type: array
+                queue:
+                    items:
+                        $ref: '#/components/schemas/TestStatusItem'
+                    type: array
+                running:
+                    items:
+                        $ref: '#/components/schemas/TestStatusItem'
+                    type: array
+            type: object
+        TestStatusItem:
+            properties:
+                id:
+                    description: Id for the run.
+                    type: string
+                name:
+                    description: Script or snippet name.
+                    type: string
+                result:
+                    $ref: '#/components/schemas/TestStatusResult'
+                status:
+                    description: Textual and/or narrative status or error information.
+                    type: string
+                token:
+                    description: Discrete token describing the current state of the test.
+                    enum:
+                        - waiting
+                        - start
+                        - running
+                        - done
+                        - error
+                    type: string
+            type: object
+        TestStatusResult:
+            description: All values will be zero if test is not complete or had a catastrophic fault.
+            properties:
+                fail:
+                    description: Number of failed tests
+                    type: integer
+                pass:
+                    description: Number of passed tests
+                    type: integer
+                total:
+                    description: Total number of tests
+                    type: integer
+            type: object
+        authtoken:
+            description: A non-OAuth authorization token.
+            pattern: ([A-Z])+
+            type: string
+        base64:
+            pattern: ([A-Za-z0123456789+/=])+
+            type: string
+        giusername:
+            pattern: ^[a-zA-Z]([a-zA-Z1234567890_]+$)
+            type: string
+            x-last-modified: 1689365100370
+        namevalue:
+            properties:
+                name:
+                    type: string
+                value:
+                    type: string
+            type: object
+    securitySchemes: {}
+info:
+    description: Manage test service.
+    license:
+        name: MIT License
+        url: https://opensource.org/licenses/MIT
+    title: test_service
+    version: "1.0"
+    x-logo:
+        url: ""
+openapi: 3.0.3
+paths:
+    /ginfra/datasource/init:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlDatasourceInit
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ControlDatasourceInitRequest'
+                description: Init the data source.
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlDatasourceInitResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Initialize a data source.
+    /ginfra/manage/reset:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlManageReset
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlActionResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this service/server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Reset the service/server.
+    /ginfra/manage/stop:
+        post:
+            description: It is up to the implementation on how to use this.
+            operationId: giControlManageStop
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlActionResponse'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized
+                "404":
+                    description: Particular control not implemented for this server.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Stop the service/server.
+    /ginfra/specifics:
+        get:
+            description: Get specifics
+            operationId: giGetSpecifics
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Specifics'
+                    description: Success
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get specifics for this service
+    /gitest/log:
+        get:
+            description: Get log for a test.
+            operationId: giTestLog
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Test ID.
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        text/plain:
+                            schema:
+                                type: string
+                    description: Success
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User ID did not submit test with the given id.
+                "404":
+                    description: Test with id not found.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get log for a test.
+    /gitest/remove:
+        post:
+            description: Remove a list of completed tests.
+            operationId: giTestRemove
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TestRemoveRequest'
+                description: Test file data.
+                required: true
+            responses:
+                "200":
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User id did not submit test with the given id.
+                "404":
+                    description: Not found if any of the ids are not found.  Those that are found will be removed.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Remove a list of completed tests.
+    /gitest/run:
+        post:
+            description: Run a test test.
+            operationId: giTestRun
+            parameters:
+                - description: Service auth access token generated when the service is registered and started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Target URL.
+                  in: header
+                  name: target
+                  required: true
+                  schema:
+                    type: string
+                - description: Script or snippet name.
+                  in: header
+                  name: name
+                  required: true
+                  schema:
+                    type: string
+                - description: Id for the run.
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    type: integer
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+                - description: Values for the run.  These should be somewhat limited.
+                  in: header
+                  name: values
+                  schema:
+                    type: string
+                - description: Execution provider.
+                  in: header
+                  name: provider
+                  schema:
+                    type: string
+                - description: Execution provider endpoint URL.
+                  in: header
+                  name: provider_url
+                  schema:
+                    type: string
+                - description: Execution provider endpoint URL authorization token.
+                  in: header
+                  name: provider_token
+                  schema:
+                    type: string
+                - description: Execution provider endpoint model request.
+                  in: header
+                  name: provider_model
+                  schema:
+                    type: string
+                - description: Indicates if the text represents an order.
+                  in: header
+                  name: is_order
+                  required: false
+                  schema:
+                    type: boolean
+            requestBody:
+                content:
+                    text/plain:
+                        schema:
+                            type: string
+                description: Test file data.
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TestRunInfo'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User ID is either empty or an unacceptable format.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Run a test.
+    /gitest/status/all:
+        get:
+            description: Get status for all tests submitted by the given user id.
+            operationId: giTestStatusAll
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TestStatusInfo'
+                    description: Success
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Bad request
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User ID is either empty or an unacceptable format.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get status for all tests.
+    /gitest/status/test:
+        get:
+            description: Get status for a test.
+            operationId: giTestStatusTest
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Test ID.
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TestStatusItem'
+                    description: Success
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User ID did not submit test with the given id.
+                "404":
+                    description: Test with given id not found.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Get status for a test.
+    /gitest/stop:
+        get:
+            description: Stop a test with the given id..
+            operationId: giTestStop
+            parameters:
+                - description: Administrative access token given to the config service when started.
+                  in: header
+                  name: auth
+                  required: true
+                  schema:
+                    $ref: '#/components/schemas/authtoken'
+                - description: Test ID.
+                  in: header
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+                - description: ID for the user submitting it.
+                  in: header
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TestStatusItem'
+                    description: Success
+                "401":
+                    description: Not authorized.  Token not acceptable.
+                "403":
+                    description: Forbidden.  User ID did not submit test with the given id.
+                "404":
+                    description: Test with given id not found.
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: InternalError
+            summary: Stop a test.
+security: []
+servers: []
+tags: []

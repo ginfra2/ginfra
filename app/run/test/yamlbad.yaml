@@ -1,0 +1,12 @@
+--
+Workflow:
+  - Cmd:
+      BLahBlah: windows
+      Cmd: ginfra -v
+      Post: t
+      Output:
+        Scan: version
+        NoScan: management
+      Success: Windows command is present.
+
+,,,

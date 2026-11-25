@@ -1,0 +1,19 @@
+{
+   "meta": {
+      "version": 1,
+      "name": "configservice",
+      "type": "apiecho",
+      "module_name": "gitlab.com/ginfra/gservices/service_giconfig",
+      "serviceclass": "configservice",
+      "invocationcmd": ""
+   },
+   "exposed": {
+      "4317":{
+         "name": "Otel Collector receiver grpc",
+         "serviceclass":  {
+            "name": "collector",
+            "url": "grpc://<<host"
+         }
+      }
+   }
+}

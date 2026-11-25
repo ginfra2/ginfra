@@ -1,0 +1,9 @@
+{
+    "comment": "This file will not be updates, so any additions or changes will be safe.",
+    "version": 1,
+    "name": "<<<ServiceName>>>",
+    "type": "vuevitets",
+    "module_name": "<<<Module>>>",
+    "serviceclass": "",
+    "invocationcmd": ""
+}

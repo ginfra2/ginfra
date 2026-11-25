@@ -1,0 +1,13 @@
+{
+    "auth": "AONXGULGFWEFVSHYHEHDDLDNT",
+    "config_uri": "http://...",
+    "config_host_uri": "http://...",
+    "config_access_token": "ASDGWERHDZFG",
+    "deployment": "default",
+    "name": "giuser",
+    "type": "service",
+    "port": "5111",
+    "specifics": {
+        "user_provider":  "file:///service/test/userfile.json"
+    }
+}

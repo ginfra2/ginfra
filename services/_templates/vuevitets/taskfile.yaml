@@ -1,0 +1,89 @@
+version: '3'
+
+includes:
+  docker: build/dockertask.yaml
+  custom: taskfilecustom.yaml
+
+tasks:
+
+  clean_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - exec "rm log\*.log -Force"
+      - exec "rm tests_output\* -Force"
+
+  clean_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - rm -f log/*.log
+      - rm -f tests_output/*
+
+  clean:
+    run: once
+    deps: [ clean_windows, clean_nix ]
+    cmds:
+      - cd ginfra; task clean
+
+  build_prep_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - cmd /C "copy /Y doc\UserDocs.md build\ "
+      - cmd build/seed_repo.cmd
+
+  build_prep_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - cp -f doc/UserDocs.md build/
+      - ./build/seed_repo.sh
+
+  build_prep:
+    run: once
+    deps: [ build_prep_windows, build_prep_nix ]
+
+  build_app:
+    cmds:
+      - npm install
+      - npx vite build
+
+  build_ginfra:
+    deps: [ build_prep ]
+    cmds:
+      - cd ginfra; task build
+
+  update:
+    run: once
+    cmds:
+      - cd ginfra; ginfra update service; go mod tidy
+
+  build:
+    deps: [ build_app, build_ginfra ]
+
+  docker:
+    deps: [ build ]
+    requires:
+      vars: [ GINFRA_DOCKER_REPO ]
+    cmds:
+      - docker build . -f build/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}} || true
+
+  docker_push:
+    deps: [ docker ]
+    cmds:
+      - docker push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah:
+    deps: [ build ]
+    cmds:
+      - buildah build -f build/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah_push:
+    deps: [ buildah ]
+    cmds:
+      - buildah push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  stubs:
+    deps: [ custom:stubs, custom:stubs_ginfra ]
+

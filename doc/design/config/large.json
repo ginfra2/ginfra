@@ -1,0 +1,193 @@
+{
+  "auth": "AGVCEKHTGBHX",
+  "deployments": {
+    "default": {
+      "discovery": {
+        "portals": {
+          "*": "deskgoat"
+        },
+        "services": {
+          "gipet": "http://172.18.0.4:8901/",
+          "giuser": "http://172.18.0.3:8900/",
+          "server_moondream": "http://172.18.0.7:8904/",
+          "server_moondream/moondream_endpoint": "http://172.18.0.7:38291",
+          "server_ollama": "http://172.18.0.6:8903/",
+          "server_ollama/ollama_endpoint": "http://172.18.0.6:11434",
+          "service_magnitude": "http://172.18.0.8:8905/",
+          "web_userapp": "http://172.18.0.5:8902/"
+        }
+      },
+      "services": {
+        "gipet": {
+          "management": {
+            "auth": "XCIYHYUWVBEW",
+            "instance": {
+              "6a21bbdbe238": {
+                "fqdn": "172.18.0.4",
+                "id": "6a21bbdbe238",
+                "ip": "172.18.0.4",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XCIYHYUWVBEW",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/gipet",
+              "port": 8901,
+              "service_class": "gipet",
+              "specifics": {}
+            },
+            "service_auth": "6IV8ZU2QHAFJ1LL6W9CG"
+          },
+          "type": "host"
+        },
+        "giuser": {
+          "management": {
+            "auth": "XTMXGHMYGRVQ",
+            "instance": {
+              "2176a393b769": {
+                "fqdn": "172.18.0.3",
+                "id": "2176a393b769",
+                "ip": "172.18.0.3",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XTMXGHMYGRVQ",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/giuser",
+              "port": 8900,
+              "service_class": "giuser",
+              "specifics": {
+                "user_provider": "file:///service/test/userfile.json"
+              }
+            },
+            "service_auth": "JF7LCR5ZJ2EDHSR4N88Q"
+          },
+          "type": "host"
+        },
+        "server_moondream": {
+          "management": {
+            "auth": "XOYVGEJGPHDJ",
+            "instance": {
+              "5219d9763ec9": {
+                "fqdn": "172.18.0.7",
+                "id": "5219d9763ec9",
+                "ip": "172.18.0.7",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XOYVGEJGPHDJ",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/server_moondream",
+              "port": 8904,
+              "service_class": "server_moondream",
+              "specifics": {}
+            },
+            "service_auth": "TWN45CORLGNH748H928A"
+          },
+          "type": "host"
+        },
+        "server_ollama": {
+          "management": {
+            "auth": "XWIGKLWADIDW",
+            "instance": {
+              "c62130611646": {
+                "fqdn": "172.18.0.6",
+                "id": "c62130611646",
+                "ip": "172.18.0.6",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XWIGKLWADIDW",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/server_ollama",
+              "port": 8903,
+              "service_class": "server_ollama",
+              "specifics": {}
+            },
+            "service_auth": "1VUER2QV94KDHRMZLAG4"
+          },
+          "type": "host"
+        },
+        "service_magnitude": {
+          "management": {
+            "auth": "XFHIWHFEUYSX",
+            "instance": {
+              "18a879f31e16": {
+                "fqdn": "172.18.0.8",
+                "id": "18a879f31e16",
+                "ip": "172.18.0.8",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XFHIWHFEUYSX",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/service_magnitude",
+              "port": 8905,
+              "service_class": "service_magnitude",
+              "specifics": {}
+            },
+            "service_auth": "NRNRO5O7MJR3HC938O1E"
+          },
+          "type": "host"
+        },
+        "web_userapp": {
+          "management": {
+            "auth": "XAONPBDNYEOJ",
+            "instance": {
+              "f62c487c9867": {
+                "fqdn": "172.18.0.5",
+                "id": "f62c487c9867",
+                "ip": "172.18.0.5",
+                "type": "host"
+              }
+            }
+          },
+          "service": {
+            "auth": "XAONPBDNYEOJ",
+            "config": {
+              "config_provider": "http://deskgoat:5111",
+              "image": "ginfra/web_userapp",
+              "port": 8902,
+              "service_class": "web_userapp",
+              "specifics": {
+                "web_port": "8080"
+              }
+            },
+            "service_auth": "V0QCNIKSING732PUKI6Y"
+          },
+          "type": "host"
+        }
+      }
+    }
+  },
+  "live": {
+    "time": "2025-05-14T12:55:08.853382109Z"
+  },
+  "reservations": {
+    "default": {
+      "ports": {
+        "gipet": "8901",
+        "giuser": "8900",
+        "server_moondream": "8904",
+        "server_ollama": "8903",
+        "service_magnitude": "8905",
+        "web_userapp": "8902"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+version: '3'
+
+tasks:
+
+  stubs_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - assets/stubs.ps1
+
+  stubs_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - assets/stubs.sh
+
+  stubs:
+    deps: [ stubs_windows, stubs_nix ]
+
+  build_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - ./gradlew build
+
+  build_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - gradlew.bat build
+
+  build:
+    deps: [ build_nix, build_windows ]
+
+  install:
+    run: once
+    cmds:
+      - mvn clean install
+
+  push:
+    deps: [ build, install ]

@@ -1,0 +1,45 @@
+---
+Workflow:
+  - Ginfra:
+      Cmd: manage host init gservices/giconfig
+      Output:
+        - Source: Hosting.json
+        - Delay: 100
+        - Scan: DeploymentName
+      Success: Configuration provider started.
+  - Ginfra:
+      Cmd: manage host start giuser gservices/giuser user_provider file:///service/test/userfile.json
+      Ping:
+        Delay: 50
+        Until: 6000
+        Url: http://localhost:5111/specifics
+        CodeExpect: 200
+      Success: User provider started.
+  - Ginfra:
+      Cmd: manage host start userview gservices/web_userview web_port 8080
+      Ping:
+        Delay: 500
+        Until: 6000
+        Url: http://localhost:8080/index.html
+        CodeExpect: 200
+      Success: Web Userview started.
+  - Ginfra:
+      Cmd: manage host start selenium gservices/service_selenium
+      Ping:
+        Delay: 50
+        Until: 6000
+        Url: http://localhost:8902/specifics
+        CodeExpect: 200
+      Success: Selenium service started
+  - Ginfra:
+      Cmd: tool selenium run localhost:8902 http://<<<GINFRA_BUILTIN_IP>>>:8080 test.snp
+      Output:
+        - Delay: 1000
+        - Extract:
+            RegEx: H[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]
+            Target: SnippetId
+  - Ginfra:
+      Cmd: tool selenium result localhost:8902 <<<SnippetId>>>
+      Output:
+        Delay: 200
+      Post: t

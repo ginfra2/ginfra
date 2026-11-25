@@ -1,0 +1,17 @@
+---
+Workflow:
+  - Ginfra:
+      Cmd: manage host init gservices/giconfig
+      Output:
+        Delay: 100
+        Scan: DeploymentName
+        Source: Hosting.json
+      Success: Configuration provider started.
+  - Ginfra:
+      Cmd: manage host start <<<ServiceName>>> <<<ServicePath>>>
+      Ping:
+        Delay: 50
+        Until: 6000
+        Url: http://localhost:5111/specifics
+        CodeExpect: 200
+      Success: Server controller started.

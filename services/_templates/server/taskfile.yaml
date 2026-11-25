@@ -1,0 +1,113 @@
+version: '3'
+
+includes:
+  docker: build/dockertask.yaml
+  custom: taskfilecustom.yaml
+
+tasks:
+
+  clean_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - exec "rm log\*.log -Force"
+      - exec "rm service_config.json -Force"
+
+  clean_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - rm -f log/*.log
+      - rm -f service_config.json
+
+  clean:
+    run: once
+    deps: [ clean_windows, clean_nix ]
+    cmds:
+      - go mod tidy
+
+  build_prep_windows:
+    run: once
+    platforms: [ windows ]
+    cmds:
+      - cmd /C "copy /Y doc\UserDocs.md build\ "
+      - exec "rm service_config.json -Force"
+      - cmd build/seed_repo.cmd
+
+  build_prep_nix:
+    run: once
+    platforms: [ linux, darwin ]
+    cmds:
+      - cp -f doc/UserDocs.md build/
+      - rm -f service_config.json
+      - ./build/seed_repo.sh
+
+  build_prep:
+    run: once
+    deps: [ build_prep_windows, build_prep_nix ]
+
+  build:
+    run: once
+    deps: [ build_prep ]
+    cmds:
+      - go build -v -o build/ginfra_service.exe
+
+  unit_test:
+    run: once
+    deps: [ build ]
+    cmds:
+      - go test --tags unit_test ./service -test_service_home "{{.TASKFILE_DIR}}"
+
+  functional_test:
+    run: once
+    deps: [ build ]
+    cmds:
+      - go test --tags functional_test ./service -test_service_home "{{.TASKFILE_DIR}}"
+
+  test:
+    deps: [unit_test, functional_test]
+
+  docker:
+    deps: [ build ]
+    requires:
+      vars: [ GINFRA_DOCKER_REPO ]
+    cmds:
+      - docker build . -f build/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  docker_push:
+    deps: [ docker ]
+    cmds:
+      - docker push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah:
+    deps: [ build ]
+    cmds:
+      - buildah build -f build/Dockerfile -t {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  buildah_push:
+    deps: [ buildah ]
+    cmds:
+      - buildah push {{.GINFRA_DOCKER_REPO}}{{.GINFRA_DOCKER_PATH}}{{.GINFRA_DOCKER_TAG}}
+
+  stubs:
+    deps: [ custom:stubs ]
+
+  prime_local:
+    deps: [ custom: prime_local ]
+
+  start_container:
+    run: once
+    cmds:
+      - cd build; ginfra run test.yaml
+
+  stop_container:
+    run: once
+    cmds:
+      - cd build; ginfra manage host destroy
+
+  update:
+    run: once
+    cmds:
+      - ginfra update service
+      - go mod tidy
+

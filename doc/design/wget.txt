@@ -1,0 +1,9 @@
+
+
+wget -O- --post-data='{"name": "testdb"}' \
+  --header='Content-Type:application/json' \
+  'http://192.168.112.3:8900/control/datasource/init'
+
+  {
+
+  }

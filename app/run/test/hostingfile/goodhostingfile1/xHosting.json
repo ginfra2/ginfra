@@ -1,0 +1,12 @@
+{
+   "DeploymentName": "default",
+   "ConfigAccessToken": "ABKHOLDPCFHW",
+   "ConfigUrl": "memory://",
+   "ConfigPortalHostUrl": "memory://",
+   "NextServicePort": 0,
+   "ConfigContainerId": "",
+   "DockerHost": "",
+   "NetworkName": "",
+   "NetworkId": "",
+   "InitConfigMapName": "default-scgiconfig"
+}

@@ -1,0 +1,48 @@
+<configuration>
+
+    <appender name="peopleappender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <version>[ignore]</version>
+                <logger>[ignore]</logger>
+                <thread>[ignore]</thread>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+    <appender name="machineappender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <logger>[ignore]</logger>
+            </fieldNames>
+        </encoder>
+    </appender>
+    <appender name="accessappender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashAccessEncoder">
+            <fieldNames>
+                <logger>[ignore]</logger>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+        </encoder>
+    </appender>
+
+    <logger name="people" level="DEBUG" additivity="false">
+        <appender-ref ref="peopleappender"/>
+    </logger>
+    <logger name="machine" level="INFO" additivity="false">
+        <appender-ref ref="machineappender"/>
+    </logger>
+    <logger name="access" level="INFO" additivity="false">
+        <appender-ref ref="accessappender"/>
+    </logger>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

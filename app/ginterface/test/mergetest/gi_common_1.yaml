@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: Base components
+components:
+  securitySchemes: {}
+  schemas:
+    giusername:
+      type: string
+      pattern: ^[a-zA-Z]([a-zA-Z1234567890_]+$)
+      x-last-modified: 1689365100370
+    namevalue:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    base64:
+      type: string
+      pattern: ([A-Za-z0123456789+/=])+
+    authtoken:
+      type: string
+      description: A non-OAuth authorization token.
+      pattern: ([A-Z])+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        diagnostics:
+          type: string
+    Specifics:
+      type: string
+paths:
+  /specifics:
+    get:
+      summary: Get specifics for this service
+      description: Get specifics
+      operationId: giGetSpecifics
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Specifics'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

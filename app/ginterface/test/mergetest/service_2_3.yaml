@@ -1,0 +1,16 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: Base components
+components:
+  securitySchemes: {}
+  schemas:
+    namevalue:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    Specifics:
+      type: string

@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+
+  stubs:
+    cmds:
+      # This will create the control API.
+      - ginfra ginterface stubs openapi <<<ServiceName>>> service ""
+
+  prime_local:
+    run: once
+    cmds:
+      - ginfra manage local start http://localhost:5111 --dont_start
+

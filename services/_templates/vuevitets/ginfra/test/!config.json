@@ -1,0 +1,46 @@
+{
+  "auth": "AQTHCLLPSFJG",
+  "deployments": {
+    "default": {
+      "discovery": {
+        "portals": {
+          "*": "node1"
+        },
+        "services": {
+          "<<<ServiceName>>>": "http://localhost:8900/"
+        }
+      },
+      "services": {
+        "<<<ServiceName>>>": {
+          "management": {
+            "auth": "XAWJYFFDIDRY",
+            "instance": {
+              "local": {
+                "fqdn": "localhost",
+                "id": "local",
+                "ip": "localhost",
+                "type": "local"
+              }
+            }
+          },
+          "service": {
+            "auth": "XAWJYFFDIDRY",
+            "config": {
+              "config_provider": "file://ginfra/test/config.json",
+              "image": "",
+              "port": 8900,
+              "service_class": "<<<ServiceName>>>",
+              "specifics": {
+              }
+            },
+            "service_auth": "MOMPT5A0GSLJIDPIENF5"
+          },
+          "type": "local"
+        }
+      }
+    }
+  },
+  "live": {
+    "time": "2024-06-13T15:02:00.07252905Z"
+  }
+}

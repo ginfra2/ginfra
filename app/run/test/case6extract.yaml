@@ -1,0 +1,14 @@
+---
+Workflow:
+  - Ginfra:
+      Cmd: tool info
+      Post: y
+      Success: Command executed
+      Output:
+        Extract:
+          Regex: V.....n
+          Target: ExtractTest
+  - Ginfra:
+      Cmd: tool <<<ExtractTest>>>
+
+

@@ -1,0 +1,10 @@
+---
+Meta:
+  Config: case4config2.config
+Workflow:
+  - Ginfra:
+      Cmd: tool info
+      Post: y
+      Success: Command executed
+
+

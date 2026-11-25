@@ -1,0 +1,10 @@
+---
+Workflow:
+  - Cmd:
+      Cmd: ginfra
+      Post: t
+      Success: Command executed
+
+
+
+

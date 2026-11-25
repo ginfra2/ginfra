@@ -1,0 +1,11 @@
+---
+Meta:
+  Terminate: true
+Workflow:
+  - Ginfra:
+      Cmd: tool snooze 5000
+      Detach: true
+      Post: y
+      Success: Command executed
+
+

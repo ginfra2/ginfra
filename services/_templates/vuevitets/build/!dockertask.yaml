@@ -1,0 +1,6 @@
+version: '3'
+
+vars:
+  GINFRA_DOCKER_REPO: ""
+  GINFRA_DOCKER_PATH: "ginfra/<<<ServiceName>>>"
+  GINFRA_DOCKER_TAG: ""

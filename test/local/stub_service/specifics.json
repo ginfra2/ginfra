@@ -1,0 +1,10 @@
+{
+   "meta": {
+      "version": 1,
+      "name": "stub_service",
+      "type": "none",
+      "module_name": "",
+      "serviceclass": "stub_service",
+      "invocationcmd": ""
+   }
+}

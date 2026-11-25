@@ -1,0 +1,10 @@
+{
+   "meta": {
+      "version": 1,
+      "name": "<<<ServiceName>>>",
+      "type": "<<<ServiceType>>>",
+      "module_name": "<<<Module>>>",
+      "serviceclass": "<<<ServiceName>>>",
+      "invocationcmd": ""
+   }
+}

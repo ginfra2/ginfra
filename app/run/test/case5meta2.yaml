@@ -1,0 +1,9 @@
+---
+Meta:
+  WorkingDir: 7124%*@#&$@*$
+Workflow:
+  - Ginfra:
+      Cmd: tool info
+
+
+

@@ -1,0 +1,45 @@
+{
+   "auth": "AIKPBIPFJVJJ",
+   "deployments": {
+      "default": {
+         "discovery": {
+            "portals": {
+               "*": "node1"
+            },
+            "services": {
+               "server_otelcol": "http://192.168.96.3:8900/",
+               "server_otelcol/collector": "grpc://192.168.96.3:4317/"
+            }
+         },
+         "services": {
+            "server_otelcol": {
+               "management": {
+                  "auth": "XLHTEIRHTPVR",
+                  "instance": {
+                     "31e239b37fea": {
+                        "fqdn": "192.168.96.3",
+                        "id": "31e239b37fea",
+                        "ip": "192.168.96.3",
+                        "type": "host"
+                     }
+                  }
+               },
+               "service": {
+                  "auth": "XLHTEIRHTPVR",
+                  "config": {
+                     "config_provider": "http://192.168.96.2:5111/",
+                     "image": "gservices/server_otelcol",
+                     "port": 8900,
+                     "service_class": "server_otelcol",
+                     "specifics": {}
+                  }
+               },
+               "type": "host"
+            }
+         }
+      }
+   },
+   "live": {
+      "time": "2024-06-17T14:22:24.759285024Z"
+   }
+}

@@ -1,0 +1,943 @@
+openapi: 3.0.3
+info:
+  title: GIConfig Service
+  description: Configuration service.
+  contact:
+    email: inquiries@ginfra.tech
+  version: 0.0.1
+paths:
+  /configservice/register:
+    post:
+      summary: Register a service.
+      description: A privileged registration request.
+      operationId: giConfigRegisterService
+      parameters:
+        - name: confauth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      requestBody:
+        description: Register a service.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigServiceRegistrationRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/deregister/{deployment}/{name}/:
+    post:
+      summary: Deregister a service.
+      description: A priviledged deregistration request.
+      operationId: giConfigDeregisterService
+      parameters:
+        - name: confauth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: name
+          in: path
+          description: Unique name of the service.
+          required: true
+          schema:
+            type: string
+        - name: deployment
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/instance:
+    post:
+      summary: Register or update a service instance.
+      description: A privileged registration request.
+      operationId: giConfigRegisterInstance
+      parameters:
+        - name: confauth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      requestBody:
+        description: Register a service instance.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigServiceInstanceRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigServiceRegistrationResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/discovery/add/:
+    put:
+      summary: Add a discovery point
+      description: It will add a discovery point.
+      operationId: giConfigDiscoveryAdd
+      parameters:
+        - name: confauth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: header
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: sclass
+          in: header
+          description: Service class to add.
+          required: true
+          schema:
+            type: string
+        - name: uri
+          in: header
+          description: Uri for the service class.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/portal/{operation}/{deployment}/:
+    post:
+      summary: Register or update a portal.
+      description: Register or update a portal.
+      operationId: giConfigPortal
+      parameters:
+        - name: confauth
+          in: header
+          description: Administrative access token given to the config service when started.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: operation
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+            enum: [put, remove]
+        - name: deployment
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Register a portal.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigPortalRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/query:
+    get:
+      summary: Query config.
+      description: Query configuration data.
+      operationId: giConfigQueryConfig
+      parameters:
+        - name: qpath
+          in: header
+          description: The dot separated path the configuration point.
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConfigPath'
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigQueryResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/set:
+    post:
+      summary: Set configurations.
+      description: A privileged registration request.
+      operationId: giConfigSetConfig
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      requestBody:
+        description: Set config.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigServiceSetRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/remove:
+    get:
+      summary: Remove config.
+      description: Remove configuration data.
+      operationId: giRemoveConfig
+      parameters:
+        - name: qpath
+          in: header
+          description: The dot separated path the configuration point.
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConfigPath'
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/discover/service/{deployment}/{serviceclass}:
+    get:
+      summary: Discover a service.
+      description: Discover a service entrypoint uri.
+      operationId: giDiscoverService
+      parameters:
+        - name: deployment
+          in: path
+          description: Deployment name.
+          required: true
+          schema:
+            type: string
+        - name: serviceclass
+          in: path
+          description: Service class name.
+          required: true
+          schema:
+            type: string
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoverServiceResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/discover/portal/{deployment}/{serviceclass}:
+    get:
+      summary: Discover a portal for a deployment.
+      description: Discover a portal location for a deployment.  A portal provides external access to a service.
+      operationId: giDiscoverPortal
+      parameters:
+        - name: deployment
+          in: path
+          description: Deployment name.
+          required: true
+          schema:
+            type: string
+        - name: serviceclass
+          in: path
+          description: Service class name.
+          required: true
+          schema:
+            type: string
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoverPortalResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/state/init/{deployment}/{name}/{id}/:
+    get:
+      summary: Get the current initializaton state.
+      description: An initializaton state request.
+      operationId: giConfigGetInit
+      parameters:
+        - name: confauth
+          in: header
+          description: Service access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: Unique name of the service.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Unique identity of the calling instance.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigGetInitResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/state/get/{deployment}/{name}/:
+    get:
+      summary: Get the current service state.
+      description: An service state request.
+      operationId: giConfigGetState
+      parameters:
+        - name: confauth
+          in: header
+          description: Service access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: Unique name of the service.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigGetStateResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/state/post/{deployment}/{name}/{id}:
+    post:
+      summary: Set State.
+      description: A set state request.
+      operationId: giConfigPostState
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: path
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: Unique name of the service.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Unique identity of the calling instance.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Set config.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigServiceSetStateRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigSetStateResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/store/put:
+    post:
+      summary: Store a file.
+      description: A store a file request.
+      operationId: giConfigStorePut
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: header
+          description: Unique deployment name or empty
+          required: false
+          schema:
+            type: string
+        - name: service
+          in: header
+          description: Service name or empty
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: header
+          description: File store name.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Data body.
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/store/get:
+    post:
+      summary: Get a file.
+      description: A get a file request.
+      operationId: giConfigStoreGet
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: header
+          description: Unique deployment name or empty
+          required: false
+          schema:
+            type: string
+        - name: service
+          in: header
+          description: Unique name of the service.  It may be empty.
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: header
+          description: File store name.
+          required: true
+          schema:
+            type: string
+        - name: raw
+          in: header
+          description: Raw or processed.
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/putvalue:
+    post:
+      summary: Put a value for the domain.
+      description: Put a value for the domain.
+      operationId: giConfigPutValue
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: header
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: header
+          description: Name of the value.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Put a value
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /configservice/getvalue:
+    get:
+      summary: Get a value for the domain.
+      description: GET a value for the domain.
+      operationId: giConfigGetValue
+      parameters:
+        - name: confauth
+          in: header
+          description: Access token.
+          required: true
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+        - name: deployment
+          in: header
+          description: Unique deployment name.
+          required: true
+          schema:
+            type: string
+        - name: service
+          in: header
+          description: Requesting service.  If the service is part of the requested deployment name, than the service auth is sufficient authorization.
+          schema:
+            type: string
+        - name: name
+          in: header
+          description: Name of the value.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigGetValueResponse'
+        '403':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ConfigPath:
+      type: string
+      pattern: ([A-Za-z0123456789._\-^\|\(\)\[\]\{\}/])+
+    GetKindType:
+      type: string
+      enum: [ service ]
+    ConfigServiceRegistrationRequest:
+      type: object
+      properties:
+        itype:
+          type: string
+          description: Instance host type
+        name:
+          type: string
+          description: System unique name
+        deployment:
+          type: string
+          description: Deployment name.  If blank it will be the default deployment.
+        auth:
+          type: string
+          description: Service control authorization token.
+        configprovider:
+          type: string
+          description: URI to configuration provider.  This is not authoritive.
+        port:
+          type: integer
+          description: Exposed service port
+          format: int32
+          minimum: 20
+          maximum: 65535
+        image:
+          type: string
+        serviceclass:
+          type: string
+        specifics:
+          $ref: 'gi_common.yaml#/components/schemas/base64'
+    ConfigServiceInstanceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: System unique name
+        deployment:
+          type: string
+          description: Deployment name.  If blank it will be the default deployment.
+        sauth:
+            description: Service friendly config authorization token.
+            type: string
+        itype:
+          type: string
+          description: Specific instance type.
+        id:
+          type: string
+          description: IP address.
+        ip:
+          type: string
+          description: IP address.
+        fqdn:
+          type: string
+          description: FQDN for the entrypoint for the service.
+    ConfigPortalRequest:
+      type: object
+      properties:
+        portal:
+          type: string
+          description: Typically an address or DN for the portal.
+        sclass:
+          type: string
+          description: Service class.
+    ConfigServiceRegistrationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: System unique name
+        confauth:
+          description: Auth token the service should use to access this service.
+          $ref: 'gi_common.yaml#/components/schemas/authtoken'
+    ConfigQueryResponse:
+      type: object
+      properties:
+        qpath:
+          $ref: '#/components/schemas/ConfigPath'
+        block:
+          description: Base64 json block representing the config.
+          $ref: 'gi_common.yaml#/components/schemas/base64'
+    ConfigGetStateResponse:
+      type: object
+      properties:
+        block:
+          description: Base64 json block representing the state.
+          $ref: 'gi_common.yaml#/components/schemas/base64'
+    ConfigGetValueResponse:
+      type: object
+      properties:
+        block:
+          description: String representing the value.
+          type: string
+    ConfigGetInitResponse:
+      type: object
+      properties:
+        state:
+          type: integer
+          description: Discovered uri
+    ConfigServiceSetStateRequest:
+      type: object
+      properties:
+        block:
+          $ref: 'gi_common.yaml#/components/schemas/base64'
+    ConfigSetStateResponse:
+      type: object
+      properties:
+        state:
+          type: integer
+          description: State
+    ConfigServiceSetRequest:
+      type: object
+      properties:
+        failmode:
+          type: string
+          enum:
+            - none
+            - rollback
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigSetItem'
+    ConfigSetItem:
+      type: object
+      properties:
+        path:
+          $ref: '#/components/schemas/ConfigPath'
+        block:
+          $ref: 'gi_common.yaml#/components/schemas/base64'
+    DiscoverServiceResponse:
+      type: object
+      properties:
+        uri:
+          type: string
+          description: Discovered uri
+    DiscoverPortalResponse:
+      type: object
+      properties:
+        uri:
+          type: string
+          description: Portal location
+

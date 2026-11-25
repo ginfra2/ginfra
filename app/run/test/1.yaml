@@ -1,0 +1,29 @@
+---
+Workflow:
+  - Cmd:
+      Platform: windows
+      Cmd: ginfra -v
+      Post: t
+      Output:
+        Scan: version
+        NoScan: management
+      Success: Windows command is present.
+  - Cmd:
+      Platform: nix
+      Cmd: ginfra -v
+      Post: t
+      Output:
+        Terminate: true
+        Scan: version
+        NoScan: management
+        Comment: Thing
+      Success: Unix command is present.
+  - Cmd:
+      Cmd: ginfra host
+      Post: "TRUE"
+      Output:
+        Scan: Host management
+  - Log: blah blah
+
+
+

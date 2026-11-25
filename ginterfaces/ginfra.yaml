@@ -1,0 +1,175 @@
+openapi: 3.0.3
+info:
+  title: server_control_service
+  version: '1.0'
+  x-logo:
+    url: ''
+  description: Server control service.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+paths:
+  /ginfra/specifics:
+    get:
+      summary: Get specifics for this service
+      description: Get specifics
+      operationId: giGetSpecifics
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/Specifics'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /ginfra/datasource/init:
+    post:
+      summary: Initialize a data source.
+      description: It is up to the implementation on how to use this.
+      operationId: giControlDatasourceInit
+      parameters:
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      requestBody:
+        description: Init the data source.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ControlDatasourceInitRequest'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlDatasourceInitResponse'
+        '404':
+          description: Particular control not implemented for this server.
+        '401':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /ginfra/manage/reset:
+    post:
+      summary: Reset the service/server.
+      description: It is up to the implementation on how to use this.
+      operationId: giControlManageReset
+      parameters:
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlActionResponse'
+        '404':
+          description: Particular control not implemented for this service/server.
+        '401':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+  /ginfra/manage/stop:
+    post:
+      summary: Stop the service/server.
+      description: It is up to the implementation on how to use this.
+      operationId: giControlManageStop
+      parameters:
+        - name: auth
+          in: header
+          description: Service auth access token generated when the service is registered and started.
+          schema:
+            $ref: 'gi_common.yaml#/components/schemas/authtoken'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlActionResponse'
+        '404':
+          description: Particular control not implemented for this server.
+        '401':
+          description: Not authorized
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: InternalError
+          content:
+            application/json:
+              schema:
+                $ref: 'gi_common.yaml#/components/schemas/ErrorResponse'
+components:
+  securitySchemes: {}
+  schemas:
+    ControlDatasourceInitRequest:
+      type: object
+      required: [ name ]
+      properties:
+        name:
+          type: string
+          pattern: ^([a-zA-Z1234567890]+$)
+    ControlDatasourceInitResponse:
+      type: object
+      required: [ username, password, port, uri ]
+      properties:
+        username:
+          type: string
+          pattern: ^([a-zA-Z]+$)
+        password:
+          type: string
+          pattern: ^([a-zA-Z1234567890\.\@\$\#\!\^\*\(\)]+$)
+        port:
+          type: integer
+          minimum: 100
+          maximum: 65535
+        uri:
+          type: string
+          pattern: ^([a-z][a-z0-9+.-]*):(?:\/\/((?:(?=((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*))(\3)@)?(?=(\[[0-9A-F:.]{2,}\]|(?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*))\5(?::(?=(\d*))\6)?)(\/(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\8)?|(\/?(?!\/)(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/]|%[0-9A-F]{2})*))\10)?)(?:\?(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\11)?(?:#(?=((?:[a-z0-9-._~!$&'()*+,;=:@\/?]|%[0-9A-F]{2})*))\12)?$/i
+    ControlActionResponse:
+      type: object
+      properties:
+        note:
+          type: string
+          pattern: ^([a-zA-Z]+$)
+  headers: {}
+tags: []
+servers: []
+security: []

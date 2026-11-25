@@ -1,0 +1,112 @@
+Delve command lines for debugging various components.
+----------------------------------------------------------------
+DEBUG GINFRA
+Assumes repos checked out to /build and there is a /build/tmp directory.
+
+$ go install github.com/go-delve/delve/cmd/dlv@latest
+
+Giconfig:
+cd /build/ginfra
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/gservices/service_giconfig --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- host --host_dir /build/tmp init ginfra/giconfig --host 192.168.1.41
+
+GiUser:
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/gservices/service_giuser --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- host --host_dir /build/tmp start ginfra/giuser user_provider file:///service/test/userfile.json --host 192.168.1.41
+
+Web_Userview:
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/gservices/web_userview --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- host --host_dir /build/tmp start ginfra/web_userview web_port 8080
+
+
+Remember to run when done:  ginfra manage host destroy
+
+------------------------------------------------------------------
+OTHER
+
+Shutdown giuser:
+GiUser:
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/gservices/service_giuser --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- manage host --host_dir /build/tmp stop giuser
+
+Other Ginfra Commands:
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/tmp --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- tool selenium run 192.168.1.41:4444 192.168.1.41:8080 e2e.snp
+
+Debug tests:
+dlv test gitlab.com/ginfra/ginfra/app/manage --log --wd /develop/ginfra --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test"
+
+dlv test gitlab.com/ginfra/ginfra --log --wd /develop/ginfra --listen localhost:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test"
+
+
+Kube init:
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/gservices/service_giconfig --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- kube init ginfra/giconfig
+
+
+-------------------------------------------------------------------------
+DOCKER
+
+docker run -it --network ginfranet_default --entrypoint "bash" 4dcc0094074c
+
+
+ginfra host init ginfra/giconfig --debugger 40001
+
+ginfra host --gpus all start ginfra/server_ollama
+
+------------------------------------------------------------------------
+SERVICE TESTS
+
+dlv test gitlab.com/ginfra/gservices/service_giconfig/service/... --log --wd /build/gservices/service_giconfig --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test,local_test" -- -test_service_home "/build/gservices/service_giconfig"
+
+dlv test gitlab.com/ginfra/gservices/service_giuser/service/... --log --wd /build/gservices/service_giuser --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test,local_test" -- -test_service_home "/build/gservices/service_giuser"
+
+
+--------------------------------------------------------------------------
+
+docker run -p 9229:9229 -p 8000:8000 -it --entrypoint bash 21
+
+ node --inspect-brk=0.0.0.0:9229 server.js
+
+
+
+--------
+
+dlv test gitlab.com/ginfra/ginfra/... --log --wd /develop/ginfra --listen localhost:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test,local_test"
+
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/tmp --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- --service magnitude tool test  run http://192.168.1.41:8080/ test.mag.ts
+dlv debug  gitlab.com/ginfra/ginfra --log --wd /build/tmp --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- --service magnitude tool test status 1
+
+
+dlv test gitlab.com/ginfra/ginfra/app/generate --log --wd /develop/ginfra --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test"
+
+dlv debug gitlab.com/ginfra/ginfra --log --wd /build/gservice/services/service_giuser --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient  manage start local http://localhost:8881/ --specifics '[{"user_provider":"file://test/userfile.json"}]'
+
+dlv debug gitlab.com/ginfra/ginfra --log --wd /build/ginfra/tmp --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- run demo.yaml
+
+dlv exec build/service.exe --log --wd /build/gservices_giuser --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- /service http://192.168.96.2:5111 AUTGCIILYM --name giuser --deployment dep1 --type host
+
+dlv exec build/service.exe --log  --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient -- /build/gservices/service_giuser http://192.168.96.2:5111 AUTGCIILYM --name giuser --deployment dep1 --type host
+
+------
+
+dlv exec /usr/local/go/bin/ginfra --log --wd /build/gservices/integration/demo/host --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --  manage host init gservices/giconfig --host 192.168.1.41
+
+
+
+---
+
+dlv exec  /usr/local/go/bin/ginfra --log --wd /build/gservices/integration/demo/host --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --  manage host start web_userview gservices/web_userview --port 8080
+dlv exec  /usr/local/go/bin/ginfra --log --wd /build/gservices/integration/demo/host --listen 192.168.1.41:40002 --headless --api-version=2 --accept-multiclient --  manage host start giuser gservices/giuser user_provider file:///service/test/userfile.json
+
+
+
+---
+
+
+ docker run -it --entrypoint bash -p 8901:8901 -p 40001:40001 --net ginfranet_default a2
+
+./debugging.sh
+wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+go install github.com/go-delve/delve/cmd/dlv@latest
+/root/go/bin/dlv exec /service/ginfra_service.exe --log --wd /service --listen localhost:40001 --headless --api-version=2 --accept-multiclient -- /service
+
+
+dlv test gitlab.com/ginfra/gservices/service_giconfig/service/... --log --wd /build/gservices/service_giconfig --listen 192.168.1.41:40001 --headless --api-version=2 --accept-multiclient --build-flags="--tags=unit_test,functional_test,local_test" -- -test_service_home "/build/gservices/service_giconfig"
+

@@ -1,0 +1,11 @@
+bundle.zip
+.idea
+*.log
+*.exe
+
+log/ginfra*
+
+build/*.exe
+build/*.md
+build/.meta.json
+

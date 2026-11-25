@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+
+  docker:
+    cmds:
+      - docker build . -f Dockerfile -t ginfra/initcontainer
+
+  docker_push:
+    deps: [ docker ]
+    cmds:
+      - docker push ginfra/initcontainer
+
+  buildah:
+    cmds:
+      - buildah build -f Dockerfile -t ginfra/initcontainer
+
+  buildah_push:
+    cmds:
+      - buildah build -f Dockerfile -t docker.io/ginfra/initcontainer
+      - buildah push docker.io/ginfra/initcontainer
+

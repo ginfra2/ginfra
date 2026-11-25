@@ -1,0 +1,75 @@
+{
+   "auth": "AAAAAAAAAAAA",
+   "deployments": {
+      "default": {
+         "discovery": {
+            "portals": {
+               "*": "node1"
+            },
+            "services": {
+               "giuser": "http://172.23.0.3:8900/",
+               "userview": "http://172.23.0.4:8901/"
+            }
+         },
+         "services": {
+            "giuser": {
+               "management": {
+                  "auth": "XXXXXXXXXXXX",
+                  "instance": {
+                     "709f9fd7cf56": {
+                        "fqdn": "172.23.0.3",
+                        "id": "709f9fd7cf56",
+                        "ip": "172.23.0.3",
+                        "type": "host"
+                     }
+                  }
+               },
+               "service": {
+                  "auth": "XXXXXXXXXXXX",
+                  "config": {
+                     "config_provider": "http://172.23.0.2:5111/",
+                     "image": "gservices/giuser",
+                     "port": 8900,
+                     "service_class": "giuser",
+                     "specifics": {
+                        "user_provider": "file:///service/test/userfile.json"
+                     }
+                  },
+                  "service_auth": "MOMPT5A0GSLJIDPIENF5"
+               },
+               "type": "host"
+            },
+            "userview": {
+               "management": {
+                  "auth": "XXXXXXXXXXXX",
+                  "instance": {
+                     "a4ef6dc5cdaa": {
+                        "fqdn": "172.23.0.4",
+                        "id": "a4ef6dc5cdaa",
+                        "ip": "172.23.0.4",
+                        "type": "host"
+                     }
+                  }
+               },
+               "service": {
+                  "auth": "XXXXXXXXXXXX",
+                  "config": {
+                     "config_provider": "http://172.23.0.2:5111/",
+                     "image": "gservices/web_userview",
+                     "port": 8901,
+                     "service_class": "userview",
+                     "specifics": {
+                        "web_port": "8080"
+                     }
+                  },
+                  "service_auth": "PIKDU3JFGBLW7EPO0A83"
+               },
+               "type": "host"
+            }
+         }
+      }
+   },
+   "live": {
+      "time": "2024-06-13T15:02:00.07252905Z"
+   }
+}
