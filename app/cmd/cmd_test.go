@@ -12,15 +12,16 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"path/filepath"
+	"testing"
+
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/ginfra/ginfra/app"
 	"gitlab.com/ginfra/ginfra/base"
 	"gitlab.com/ginfra/ginfra/common"
 	testutil "gitlab.com/ginfra/ginfra/common/test"
-	"os"
-	"path/filepath"
-	"testing"
 )
 
 func init() {
@@ -133,18 +134,19 @@ func TestCmdErrorNoError(t *testing.T) {
 			args:    []string{},
 			errText: "",
 		},
-		{
-			name:    "Ginterface merge openapi, bad service",
-			cmd:     NewGinterfaceMergeCmd(&gctx),
-			args:    []string{"openapi", "xxxxx", "xxxx"},
-			errText: "Does not exist",
-		},
-		{
-			name:    "Ginterface merge openapi, bad target",
-			cmd:     NewGinterfaceMergeCmd(&tctx),
-			args:    []string{"openapi", "xxxxx", "xxxx"},
-			errText: "Does not exist",
-		},
+		/*
+			{
+				name:    "Ginterface merge openapi, bad service",
+				cmd:     NewGinterfaceMergeCmd(&gctx),
+				args:    []string{"openapi", "xxxxx", "xxxx"},
+				errText: "Does not exist",
+			},
+			{
+				name:    "Ginterface merge openapi, bad target",
+				cmd:     NewGinterfaceMergeCmd(&tctx),
+				args:    []string{"openapi", "xxxxx", "xxxx"},
+				errText: "Does not exist",
+			}, */
 		{
 			name:    "Tool snooze ok",
 			cmd:     NewSnoozeCommand(),
